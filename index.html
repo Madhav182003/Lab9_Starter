@@ -1,108 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 9</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 9</title>
+    <style>
+      button {
+        margin: 3px;
+      }
 
-  <style>
-    button {
-      margin: 3px;
-    }
+      button:hover {
+        cursor: pointer;
+      }
 
-    button:hover {
-      cursor: pointer;
-    }
+      #first-num,
+      #second-num {
+        width: 60px;
+      }
 
-    #first-num,
-    #second-num {
-      width: 60px;
-    }
+      output {
+        border: 1px solid gray;
+        display: block;
+        height: 18px;
+        margin-top: 5px;
+        padding: 5px;
+        width: 240px;
+      }
 
-    output {
-      border: 1px solid gray;
-      display: block;
-      height: 18px;
-      margin-top: 5px;
-      padding: 5px;
-      width: 240px;
-    }
+      main {
+        width: 800px;
+      }
 
-    main {
-      width: 800px;
-    }
+      #error-btns {
+        column-gap: 5px;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        row-gap: 5px;
+      }
 
-    #error-btns {
-      column-gap: 5px;
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: 30px;
-      row-gap: 5px;
-    }
+      #error-btns > * {
+        padding: 8px 2px;
+        width: 122px;
+      }
+    </style>
+  </head>
 
-    #error-btns>* {
-      padding: 8px 2px;
-      width: 122px;
-    }
-  </style>
-</head>
+  <body>
+    <main>
+      <form>
+        <fieldset>
+          <legend>Error Calculator</legend>
+          <input name="first-num" id="first-num" />
+          <select name="operator" id="operator">
+            <option>+</option>
+            <option>-</option>
+            <option>*</option>
+            <option>/</option>
+          </select>
+          <input name="second-num" id="second-num" />
+          <button id="calculate">Calculate</button>
+          <br />
+          <output></output>
+        </fieldset>
+      </form>
 
-<body>
-  <main>
-    <form>
-      <fieldset>
-        <legend>Error Calculator</legend>
-        <input name="first-num" id="first-num" />
-        <select name="operator" id="operator">
-          <option>+</option>
-          <option>-</option>
-          <option>*</option>
-          <option>/</option>
-        </select>
-        <input name="second-num" id="second-num" />
-        <button id="calculate">Calculate</button>
-        <br />
-        <output></output>
-      </fieldset>
-    </form>
+      <section id="error-btns">
+        <button>Console Log</button>
+        <button>Console Error</button>
+        <button>Console Count</button>
+        <button>Console Warn</button>
+        <button>Console Assert</button>
+        <button>Console Clear</button>
+        <button>Console Dir</button>
+        <button>Console dirxml</button>
+        <button>Console Group Start</button>
+        <button>Console Group End</button>
+        <button>Console Table</button>
+        <button>Start Timer</button>
+        <button>End Timer</button>
+        <button>Console Trace</button>
+        <button>Trigger a Global Error</button>
+      </section>
+    </main>
 
-    <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
-    </section>
-  </main>
+    <script>
+      let form = document.querySelector("form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let output = document.querySelector("output");
+        let firstNum = document.querySelector("#first-num").value;
+        let secondNum = document.querySelector("#second-num").value;
+        let operator = document.querySelector("#operator").value;
 
-  <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+        try {
+          if (firstNum === "" || secondNum === "")
+            throw new Error("Both numbers must be filled!");
+          output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+        } catch (err) {
+          output.innerHTML = `Error: ${err.message}`;
+          console.error(err);
+        } finally {
+          console.log("Calculation attempted");
+        }
+      });
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+      // Console API buttons
+      let consoleTimerLabel = "Timer1";
+      let groupStarted = false;
 
-    // Start your code here
-    // You may move this JS to another file if you wish
-  </script>
-</body>
+      document.querySelectorAll("#error-btns > button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const label = button.innerText;
 
+          switch (label) {
+            case "Console Log":
+              console.log("This is a console.log message");
+              break;
+            case "Console Error":
+              console.error("This is a console.error message");
+              break;
+            case "Console Count":
+              console.count("Count label");
+              break;
+            case "Console Warn":
+              console.warn("This is a console.warn message");
+              break;
+            case "Console Assert":
+              console.assert(false, "Assertion failed: condition is false");
+              break;
+            case "Console Clear":
+              console.clear();
+              break;
+            case "Console Dir":
+              console.dir(document.body);
+              break;
+            case "Console dirxml":
+              console.dirxml(document.body);
+              break;
+            case "Console Group Start":
+              console.group("Group");
+              groupStarted = true;
+              console.log("Inside console group");
+              break;
+            case "Console Group End":
+              if (groupStarted) {
+                console.groupEnd();
+                groupStarted = false;
+              }
+              break;
+            case "Console Table":
+              console.table([
+                { name: "Alice", age: 21 },
+                { name: "Bob", age: 25 },
+              ]);
+              break;
+            case "Start Timer":
+              console.time(consoleTimerLabel);
+              break;
+            case "End Timer":
+              console.timeEnd(consoleTimerLabel);
+              break;
+            case "Console Trace":
+              function traceExample() {
+                console.trace("Here’s the stack trace");
+              }
+              traceExample();
+              break;
+            case "Trigger a Global Error":
+              nonexistentFunction(); // This will cause a ReferenceError
+              break;
+          }
+        });
+      });
+
+      // Global Error Handler
+      window.onerror = function (message, source, lineno, colno, error) {
+        console.log("Global Error caught by window.onerror:");
+        console.log("Message:", message);
+        console.log("Source:", source);
+        console.log("Line:", lineno);
+        console.log("Column:", colno);
+        console.log("Error object:", error);
+        return true; // Prevent default logging
+      };
+      window.addEventListener("error", function (event) {
+        console.log("Captured with addEventListener:", event.message);
+      });
+    </script>
+    <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+    <script>
+      window.TrackJS &&
+        TrackJS.install({
+          token: "4946061dd05648faa18fb33cc857db72",
+          // for more configuration options, see https://docs.trackjs.com
+        });
+    </script>
+  </body>
 </html>
